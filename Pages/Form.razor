@@ -1,0 +1,136 @@
+@page "/form"
+@using System.ComponentModel.DataAnnotations
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Registration Form</h3>
+        </div>
+        <div class="card-body">
+            <EditForm Model="@formModel" OnValidSubmit="@HandleSubmit">
+                <DataAnnotationsValidator />
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle"></i> Please fill in all required fields marked with *
+                </div>
+                <ValidationSummary class="text-danger mb-4" />
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="firstName" class="form-label">First Name *</label>
+                        <InputText id="firstName" class="form-control" @bind-Value="formModel.FirstName" placeholder="Enter your first name" />
+                        <ValidationMessage For="@(() => formModel.FirstName)" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="lastName" class="form-label">Last Name *</label>
+                        <InputText id="lastName" class="form-control" @bind-Value="formModel.LastName" placeholder="Enter your last name" />
+                        <ValidationMessage For="@(() => formModel.LastName)" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label">Email Address *</label>
+                        <InputText id="email" class="form-control" @bind-Value="formModel.Email" type="email" placeholder="name@example.com" />
+                        <ValidationMessage For="@(() => formModel.Email)" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <InputText id="phone" class="form-control" @bind-Value="formModel.Phone" placeholder="(123) 456-7890" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="birthDate" class="form-label">Birth Date</label>
+                        <InputDate id="birthDate" class="form-control" @bind-Value="formModel.BirthDate" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="department" class="form-label">Department *</label>
+                        <InputSelect id="department" class="form-select" @bind-Value="formModel.Department">
+                            <option value="">Select a department...</option>
+                            <option value="IT">Information Technology</option>
+                            <option value="HR">Human Resources</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Marketing">Marketing</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => formModel.Department)" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="experience" class="form-label">Years of Experience</label>
+                    <InputNumber id="experience" class="form-control" @bind-Value="formModel.YearsOfExperience" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="bio" class="form-label">Brief Bio</label>
+                    <InputTextArea id="bio" class="form-control" @bind-Value="formModel.Bio" rows="3" placeholder="Tell us about yourself..." />
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <InputCheckbox id="subscribe" class="form-check-input" @bind-Value="formModel.Subscribe" />
+                            <label class="form-check-label" for="subscribe">Subscribe to newsletter</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <InputCheckbox id="remote" class="form-check-input" @bind-Value="formModel.WillWorkRemotely" />
+                            <label class="form-check-label" for="remote">Willing to work remotely</label>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="reset" class="btn btn-secondary me-md-2">Reset</button>
+                    <button type="submit" class="btn btn-primary">Submit Registration</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private FormModel formModel = new();
+
+    private void HandleSubmit()
+    {
+        // Handle form submission here
+        Console.WriteLine($"Form submitted for: {formModel.FirstName} {formModel.LastName}");
+    }
+
+    public class FormModel
+    {
+        [Required(ErrorMessage = "First name is required")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "First name must be between 2 and 50 characters")]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Last name is required")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Last name must be between 2 and 50 characters")]
+        public string LastName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Email address is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
+        public string Email { get; set; } = string.Empty;
+
+        [Phone(ErrorMessage = "Invalid phone number")]
+        public string Phone { get; set; } = string.Empty;
+
+        public DateTime? BirthDate { get; set; }
+
+        [Required(ErrorMessage = "Department selection is required")]
+        public string Department { get; set; } = string.Empty;
+
+        [Range(0, 50, ErrorMessage = "Experience must be between 0 and 50 years")]
+        public int YearsOfExperience { get; set; }
+
+        [MaxLength(500, ErrorMessage = "Bio cannot exceed 500 characters")]
+        public string Bio { get; set; } = string.Empty;
+
+        public bool Subscribe { get; set; }
+        public bool WillWorkRemotely { get; set; }
+    }
+}
